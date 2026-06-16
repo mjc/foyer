@@ -81,24 +81,24 @@ where
     V: Value,
     P: Properties,
 {
-    fn recalculate_high_priority_weight(&mut self) {
-        self.high_priority_weight = 0;
-
+    fn high_priority_list_weight(&self) -> usize {
+        let mut weight = 0;
         let mut cursor = self.high_priority_list.cursor();
         loop {
             cursor.move_next();
             match cursor.get() {
-                Some(record) => self.high_priority_weight += record.weight(),
+                Some(record) => weight += record.weight(),
                 None => break,
             }
         }
+        weight
     }
 
     fn decrease_high_priority_weight(&mut self, weight: usize) {
         if let Some(weight) = self.high_priority_weight.checked_sub(weight) {
             self.high_priority_weight = weight;
         } else {
-            self.recalculate_high_priority_weight();
+            self.high_priority_weight = self.high_priority_list_weight();
         }
         if self.high_priority_list.is_empty() {
             self.high_priority_weight = 0;
@@ -109,7 +109,7 @@ where
         while self.high_priority_weight > self.high_priority_weight_capacity {
             // overflow last entry in high priority pool to low priority pool
             let Some(record) = self.high_priority_list.pop_front() else {
-                self.recalculate_high_priority_weight();
+                self.high_priority_weight = self.high_priority_list_weight();
                 break;
             };
             let state = unsafe { &mut *record.state().get() };
