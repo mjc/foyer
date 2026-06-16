@@ -47,7 +47,7 @@ async fn main() -> anyhow::Result<()> {
         .with_name("my-hybrid-cache")
         .with_policy(HybridCachePolicy::WriteOnEviction)
         .memory(1024)
-        .with_shards(4)
+        .with_shards(nonzero(4))
         .with_eviction_config(LruConfig {
             high_priority_pool_ratio: 0.1,
         })

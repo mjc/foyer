@@ -517,9 +517,9 @@ async fn benchmark(args: Args) {
         builder
             .with_metrics_registry(Box::new(PrometheusMetricsRegistry::new(registry)))
             .memory(args.mem.as_u64() as _)
-            .with_shards(args.shards.get())
+            .with_shards(args.shards)
     } else {
-        builder.memory(args.mem.as_u64() as _).with_shards(args.shards.get())
+        builder.memory(args.mem.as_u64() as _).with_shards(args.shards)
     };
 
     let builder = match args.eviction.as_str() {

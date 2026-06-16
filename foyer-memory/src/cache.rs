@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{any::Any, borrow::Cow, fmt::Debug, future::Future, hash::Hash, ops::Deref, sync::Arc};
+use std::{any::Any, borrow::Cow, fmt::Debug, future::Future, hash::Hash, num::NonZeroUsize, ops::Deref, sync::Arc};
 
 use equivalent::Equivalent;
 use foyer_common::{
@@ -470,8 +470,14 @@ where
 
     /// Set in-memory cache sharding count. Entries will be distributed to different shards based on their hash.
     /// Operations on different shard can be parallelized.
-    pub fn with_shards(mut self, shards: usize) -> Self {
-        self.shards = shards;
+    ///
+    /// ```compile_fail
+    /// use foyer_memory::CacheBuilder;
+    ///
+    /// let _ = CacheBuilder::<u64, u64, _>::new(1024).with_shards(0);
+    /// ```
+    pub fn with_shards(mut self, shards: NonZeroUsize) -> Self {
+        self.shards = shards.get();
         self
     }
 
@@ -1157,7 +1163,10 @@ mod tests {
     use crate::eviction::{fifo::FifoConfig, lfu::LfuConfig, lru::LruConfig, s3fifo::S3FifoConfig};
 
     const CAPACITY: usize = 100;
-    const SHARDS: usize = 4;
+    const SHARDS: NonZeroUsize = match NonZeroUsize::new(4) {
+        Some(shards) => shards,
+        None => unreachable!(),
+    };
     const RANGE: Range<u64> = 0..1000;
     const OPS: usize = 10000;
     const CONCURRENCY: usize = 8;

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::sync::Arc;
+use std::{num::NonZeroUsize, sync::Arc};
 
 use foyer::{Cache, CacheBuilder, Event, EventListener, FifoConfig};
 
@@ -42,7 +42,7 @@ fn main() {
     let cache: Cache<u64, String> = CacheBuilder::new(3)
         .with_event_listener(Arc::new(EchoEventListener))
         .with_eviction_config(FifoConfig::default())
-        .with_shards(1)
+        .with_shards(NonZeroUsize::MIN)
         .build();
 
     cache.insert(1, "Second".to_string());
