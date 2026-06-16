@@ -56,6 +56,9 @@ zstd = { workspace = true }
 core_affinity = { workspace = true }
 io-uring = { workspace = true }
 
+[target.'cfg(target_family = "windows")'.dependencies]
+windows-sys = { workspace = true }
+
 [dev-dependencies]
 bytesize = { workspace = true }
 foyer-memory = { workspace = true, features = ["test_utils"] }
