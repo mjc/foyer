@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{borrow::Cow, fmt::Debug, sync::Arc};
+use std::{borrow::Cow, fmt::Debug, num::NonZeroUsize, sync::Arc};
 
 #[cfg(feature = "tracing")]
 use foyer_common::tracing::TracingOptions;
@@ -155,7 +155,13 @@ where
 {
     /// Set in-memory cache sharding count. Entries will be distributed to different shards based on their hash.
     /// Operations on different shard can be parallelized.
-    pub fn with_shards(self, shards: usize) -> Self {
+    ///
+    /// ```compile_fail
+    /// use foyer::HybridCacheBuilder;
+    ///
+    /// let _ = HybridCacheBuilder::<u64, Vec<u8>>::new().memory(1024).with_shards(0);
+    /// ```
+    pub fn with_shards(self, shards: NonZeroUsize) -> Self {
         let builder = self.builder.with_shards(shards);
         HybridCacheBuilderPhaseMemory {
             name: self.name,

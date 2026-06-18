@@ -14,7 +14,7 @@
 
 //! micro benchmark for foyer in-memory cache hit ratio
 
-use std::sync::Arc;
+use std::{num::NonZeroUsize, sync::Arc};
 
 use csv::Reader;
 use foyer_memory::{Cache, CacheBuilder, FifoConfig, LfuConfig, LruConfig, S3FifoConfig};
@@ -26,7 +26,7 @@ type CacheValue = ();
 const ITEMS: usize = 10_000;
 const ITERATIONS: usize = 5_000_000;
 
-const SHARDS: usize = 1;
+const SHARDS: NonZeroUsize = NonZeroUsize::MIN;
 
 /*
 inspired by pingora/tinyufo/benches/bench_hit_ratio.rs

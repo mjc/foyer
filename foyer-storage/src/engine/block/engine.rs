@@ -879,7 +879,7 @@ mod tests {
 
     fn cache_for_test() -> Cache<u64, Vec<u8>, ModHasher, TestProperties> {
         CacheBuilder::new(10)
-            .with_shards(1)
+            .with_shards(nonzero(1))
             .with_eviction_config(FifoConfig::default())
             .with_hash_builder(ModHasher::default())
             .build()
